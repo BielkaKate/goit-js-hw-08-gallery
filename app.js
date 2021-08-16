@@ -63,3 +63,82 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+const refs = {
+  gallery: document.querySelector(".js-gallery"),
+  lightbox: document.querySelector(".js-lightbox"),
+  lightboxOverlay: document.querySelector(".lightbox__overlay"),
+  lightboxImage: document.querySelector(".lightbox__image"),
+  closeButton: document.querySelector('button[data-action="close-lightbox"]')
+}
+
+const {gallery, lightbox, lightboxOverlay, lightboxImage, closeButton} = refs;
+// console.log(gallery);
+
+const galleryCreator = (item) => {
+const galleryItem = document.createElement("li");
+galleryItem.classList.add("gallery__item");
+
+const galleryLink = document.createElement("a");
+galleryLink.classList.add("gallery__link");
+galleryLink.setAttribute("href", item.original);
+
+const galleryImage = document.createElement("img");
+galleryImage.classList.add("gallery__image");
+galleryImage.setAttribute("src", item.preview);
+galleryImage.setAttribute("data-source", item.original);
+galleryImage.setAttribute("alt", item.description);
+
+galleryLink.appendChild(galleryImage);
+galleryItem.appendChild(galleryLink);
+return galleryItem;
+
+};
+
+const renderMarkup = galleryItems.map(item => galleryCreator(item));
+gallery.append(...renderMarkup);
+
+
+
+gallery.addEventListener("click", openModal);
+closeButton.addEventListener("click", closeModal);
+lightboxOverlay.addEventListener("click", onOverlayClick);
+
+
+
+
+function openModal (event) {
+  event.preventDefault();
+  if (event.target === event.currentTarget){
+  return;}
+  lightbox.classList.add("is-open");
+  lightboxImage.src = event.target.getAttribute("data-source");
+  lightboxImage.alt = event.target.alt;
+  window.addEventListener("keydown", onEscPress);
+};
+
+function closeModal (){
+  lightbox.classList.remove("is-open");
+  lightboxImage.src = "";
+  lightboxImage.alt = "";
+
+  window.removeEventListener("keydown", onEscPress)
+}
+
+function onOverlayClick (event){
+  if (event.target === event.currentTarget){
+    closeModal ();
+  }
+}
+
+
+function onEscPress(event) {
+if (event.code === 'Escape'){
+  closeModal ();
+}
+
+}
+
+
+
+
